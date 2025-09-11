@@ -3,10 +3,15 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import date as dt_date
 import pandas as pd
+import os
+from openai import OpenAI
 from .. import models
 from ..database import get_db
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
+
+# Initialize OpenAI client using your key from .env
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @router.get("/{user_id}")
 def get_user_analytics(
@@ -37,6 +42,7 @@ def get_user_analytics(
             "days_counted": 0,
             "overspend_days": 0,
             "by_category": {},
+            "ai_insight": "No data available yet — start adding expenses to get insights!",
         }
 
     data = [
@@ -51,11 +57,34 @@ def get_user_analytics(
     df["date"] = pd.to_datetime(df["date"])
 
     daily = df.groupby(df["date"].dt.date)["amount"].sum()
-    expected = float(user.allowance) * int(len(daily))  # allowance per day × days with entries
+    expected = float(user.allowance) * int(len(daily))
     actual = float(daily.sum())
     savings = expected - actual
     overspend_days = int((daily > user.allowance).sum())
     by_cat = {str(k): float(v) for k, v in df.groupby("category")["amount"].sum().to_dict().items()}
+
+    # === AI-powered summary ===
+    try:
+        ai_prompt = f"""
+        The user '{user.name}' has a daily allowance of {user.allowance}.
+        They spent a total of {actual:.2f} over {len(daily)} days.
+        Their expected spend was {expected:.2f}, meaning their savings are {savings:.2f}.
+        They overspent on {overspend_days} day(s).
+        Spending by category: {by_cat}.
+
+        Please provide a short, helpful financial insight about their spending habits.
+        """
+        ai_response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "You are a helpful financial advisor."},
+                {"role": "user", "content": ai_prompt}
+            ],
+            max_tokens=150
+        )
+        ai_insight = ai_response.choices[0].message.content
+    except Exception as e:
+        ai_insight = f"AI insight could not be generated: {str(e)}"
 
     return {
         "user_id": user_id,
@@ -67,4 +96,5 @@ def get_user_analytics(
         "days_counted": int(len(daily)),
         "overspend_days": overspend_days,
         "by_category": by_cat,
+        "ai_insight": ai_insight,
     }
