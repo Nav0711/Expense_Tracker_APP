@@ -1,24 +1,21 @@
-from typing import List, Optional
+from typing import List
 from datetime import date, datetime
-from pydantic import BaseModel, EmailStr, ConfigDict
-
-# ---------- Expense Schemas ----------
+from pydantic import BaseModel, EmailStr, Field
+from typing_extensions import Annotated
 
 class ExpenseCreate(BaseModel):
     title: str
     amount: float
-    category: Optional[str] = None
-    date: Optional[date] = None
+    category: str | None = None
+    date: Annotated[date, Field(default_factory=date.today)]
 
 class ExpenseOut(ExpenseCreate):
     id: int
     user_id: int
-    # created_at might be None just after creation on some drivers, so keep it optional
-    created_at: Optional[datetime] = None
-
-    model_config = ConfigDict(from_attributes=True)
-
-# ---------- User Schemas ----------
+    created_at: datetime | None = None
+    
+    class Config:
+        from_attributes = True
 
 class UserCreate(BaseModel):
     name: str
@@ -28,5 +25,6 @@ class UserCreate(BaseModel):
 class UserOut(UserCreate):
     id: int
     expenses: List[ExpenseOut] = []
-
-    model_config = ConfigDict(from_attributes=True)
+    
+    class Config:
+        from_attributes = True
