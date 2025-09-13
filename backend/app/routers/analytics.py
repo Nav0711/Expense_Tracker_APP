@@ -3,15 +3,11 @@ from sqlalchemy.orm import Session
 from typing import Optional
 from datetime import date as dt_date
 import pandas as pd
-import os
-from openai import OpenAI
 from .. import models
 from ..database import get_db
+from ..services.ai_services import ai_insight_enhanced  # ✅ Use enhanced version
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
-
-# Initialize OpenAI client using your key from .env
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @router.get("/{user_id}")
 def get_user_analytics(
@@ -63,28 +59,23 @@ def get_user_analytics(
     overspend_days = int((daily > user.allowance).sum())
     by_cat = {str(k): float(v) for k, v in df.groupby("category")["amount"].sum().to_dict().items()}
 
-    # === AI-powered summary ===
-    try:
-        ai_prompt = f"""
-        The user '{user.name}' has a daily allowance of {user.allowance}.
-        They spent a total of {actual:.2f} over {len(daily)} days.
-        Their expected spend was {expected:.2f}, meaning their savings are {savings:.2f}.
-        They overspent on {overspend_days} day(s).
-        Spending by category: {by_cat}.
+    # ✅ Prepare a clean summary for AI
+    summary = (
+        f"User '{user.name}' has a daily allowance of ${user.allowance}. "
+        f"Over {len(daily)} days, they spent ${actual:.2f} (expected ${expected:.2f}). "
+        f"Savings: ${savings:.2f}. Overspent on {overspend_days} day(s). "
+        f"Top categories: {dict(list(sorted(by_cat.items(), key=lambda x: x[1], reverse=True))[:3])}."
+    )
 
-        Please provide a short, helpful financial insight about their spending habits.
-        """
-        ai_response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "You are a helpful financial advisor."},
-                {"role": "user", "content": ai_prompt}
-            ],
-            max_tokens=150
-        )
-        ai_insight = ai_response.choices[0].message.content
-    except Exception as e:
-        ai_insight = f"AI insight could not be generated: {str(e)}"
+    # ✅ Use enhanced AI insight with fallback data
+    ai_result = ai_insight_enhanced(
+        summary=summary,
+        expected=expected,
+        actual=actual,
+        savings=savings,
+        overspend_days=overspend_days,
+        by_cat=by_cat
+    )
 
     return {
         "user_id": user_id,
@@ -96,5 +87,5 @@ def get_user_analytics(
         "days_counted": int(len(daily)),
         "overspend_days": overspend_days,
         "by_category": by_cat,
-        "ai_insight": ai_insight,
+        "ai_insight": ai_result,
     }
