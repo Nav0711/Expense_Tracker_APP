@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 8 8 12;
+    --foreground: 120 100% 85%;
+
+    --card: 12 12 18;
+    --card-foreground: 120 100% 85%;
+
+    --popover: 12 12 18;
+    --popover-foreground: 120 100% 85%;
+
+    --primary: 120 100% 50%;
+    --primary-foreground: 8 8 12;
+    --primary-muted: 120 100% 50% / 0.1;
+    --primary-glow: 120 100% 65%;
+
+    --secondary: 18 18 24;
+    --secondary-foreground: 120 100% 85%;
+
+    --muted: 15 15 20;
+    --muted-foreground: 120 20% 65%;
+
+    --accent: 150 100% 55%;
+    --accent-foreground: 8 8 12;
+    --accent-muted: 150 100% 55% / 0.1;
+
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 24 24 30;
+    --input: 24 24 30;
+    --ring: 120 100% 50%;
+
+    --success: 120 100% 50%;
+    --success-foreground: 8 8 12;
+    --warning: 45 100% 55%;
+    --warning-foreground: 8 8 12;
+
+    --gradient-primary: linear-gradient(135deg, hsl(120 100% 50%), hsl(120 100% 65%));
+    --gradient-accent: linear-gradient(135deg, hsl(150 100% 55%), hsl(120 100% 50%));
+    --gradient-subtle: linear-gradient(135deg, hsl(8 8 12), hsl(12 12 18));
+    --gradient-neon: linear-gradient(135deg, hsl(120 100% 50% / 0.3), hsl(150 100% 55% / 0.3));
+
+    --shadow-elegant: 0 10px 30px -10px hsl(120 100% 50% / 0.3);
+    --shadow-card: 0 4px 20px -2px hsl(120 100% 50% / 0.1), 0 0 40px -10px hsl(120 100% 50% / 0.05);
+    --shadow-lg: 0 10px 40px -5px hsl(120 100% 50% / 0.2), 0 0 80px -20px hsl(120 100% 50% / 0.1);
+    --shadow-neon: 0 0 20px hsl(120 100% 50% / 0.5), 0 0 40px hsl(120 100% 50% / 0.3);
+    --shadow-glow: 0 0 60px hsl(120 100% 50% / 0.4);
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 8 8 12;
+    --sidebar-foreground: 120 100% 85%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 8 8 12;
+    --sidebar-accent: 18 18 24;
+    --sidebar-accent-foreground: 120 100% 85%;
+    --sidebar-border: 24 24 30;
+    --sidebar-ring: 120 100% 50%;
+  }
+
+  .dark {
+    --background: 4 4 8;
+    --foreground: 120 100% 90%;
+
+    --card: 8 8 12;
+    --card-foreground: 120 100% 90%;
+
+    --popover: 8 8 12;
+    --popover-foreground: 120 100% 90%;
+
+    --primary: 120 100% 55%;
+    --primary-foreground: 4 4 8;
+    --primary-muted: 120 100% 55% / 0.15;
+    --primary-glow: 120 100% 70%;
+
+    --secondary: 12 12 16;
+    --secondary-foreground: 120 100% 90%;
+
+    --muted: 8 8 12;
+    --muted-foreground: 120 30% 70%;
+
+    --accent: 150 100% 60%;
+    --accent-foreground: 4 4 8;
+    --accent-muted: 150 100% 60% / 0.15;
+
+    --destructive: 0 100% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 18 18 22;
+    --input: 18 18 22;
+    --ring: 120 100% 55%;
+
+    --success: 120 100% 55%;
+    --success-foreground: 4 4 8;
+    --warning: 45 100% 60%;
+    --warning-foreground: 4 4 8;
+
+    --gradient-primary: linear-gradient(135deg, hsl(120 100% 55%), hsl(120 100% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(150 100% 60%), hsl(120 100% 55%));
+    --gradient-subtle: linear-gradient(135deg, hsl(4 4 8), hsl(8 8 12));
+    --gradient-neon: linear-gradient(135deg, hsl(120 100% 55% / 0.4), hsl(150 100% 60% / 0.4));
+
+    --shadow-elegant: 0 10px 40px -10px hsl(120 100% 55% / 0.4);
+    --shadow-card: 0 4px 25px -2px hsl(120 100% 55% / 0.15), 0 0 50px -10px hsl(120 100% 55% / 0.1);
+    --shadow-lg: 0 10px 50px -5px hsl(120 100% 55% / 0.3), 0 0 100px -20px hsl(120 100% 55% / 0.2);
+    --shadow-neon: 0 0 25px hsl(120 100% 55% / 0.6), 0 0 50px hsl(120 100% 55% / 0.4);
+    --shadow-glow: 0 0 80px hsl(120 100% 55% / 0.5);
+
+    --sidebar-background: 4 4 8;
+    --sidebar-foreground: 120 100% 90%;
+    --sidebar-primary: 120 100% 55%;
+    --sidebar-primary-foreground: 4 4 8;
+    --sidebar-accent: 12 12 16;
+    --sidebar-accent-foreground: 120 100% 90%;
+    --sidebar-border: 18 18 22;
+    --sidebar-ring: 120 100% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.5);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.7);
+  }
+}
+
+@layer components {
+  .glass-effect {
+    @apply backdrop-blur-sm bg-card/50 border border-border/50;
+  }
+  
+  .neon-border {
+    @apply border border-primary/30 shadow-[0_0_10px_hsl(var(--primary)/0.3)];
+  }
+  
+  .neon-glow {
+    @apply shadow-[0_0_20px_hsl(var(--primary)/0.5)];
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+  }
+}
