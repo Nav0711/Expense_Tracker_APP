@@ -23,22 +23,32 @@ const Login = () => {
     e.preventDefault();
     setLoginLoading(true);
 
-    const success = await login(credentials.username, credentials.password);
-    
-    if (success) {
+    try {
+      const success = await login(credentials.username, credentials.password);
+      
+      if (success) {
+        toast({
+          title: "Welcome back!",
+          description: "You have successfully logged in.",
+        });
+        // User data is now stored in the backend and local storage
+      } else {
+        toast({
+          title: "Login failed",
+          description: "Invalid username or password.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
       toast({
-        title: "Welcome back!",
-        description: "You have successfully logged in.",
-      });
-    } else {
-      toast({
-        title: "Login failed",
-        description: "Invalid username or password.",
+        title: "Error",
+        description: "An unexpected error occurred.",
         variant: "destructive",
       });
+    } finally {
+      setLoginLoading(false);
     }
-    
-    setLoginLoading(false);
   };
 
   return (
