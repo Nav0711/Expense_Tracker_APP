@@ -48,18 +48,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
-      // Check if user exists in database, if not create them
-      const existingUsers = await userApi.list();
-      let apiUser = existingUsers.find(u => u.email === credentials.email);
-      
-      if (!apiUser) {
-        // Create user in database
-        apiUser = await userApi.create({
-          name: credentials.name,
-          email: credentials.email,
-          allowance: credentials.allowance,
-        });
-      }
+      // Store user in database
+      const apiUser = await userApi.create({
+        name: credentials.name,
+        email: credentials.email,
+        allowance: credentials.allowance,
+      });
 
       const userData: AuthUser = {
         ...apiUser,
@@ -68,6 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       setUser(userData);
       localStorage.setItem('expense-tracker-user', JSON.stringify(userData));
+      localStorage.setItem('userId', apiUser.id.toString());
       setIsLoading(false);
       return true;
     } catch (error) {
