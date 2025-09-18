@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import Navigation from '@/components/ui/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { expenseApi } from '@/lib/api';
+import { expenseApi, analyticsApi } from '@/lib/api';
 import { PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
@@ -90,17 +90,27 @@ const AddExpense = () => {
     try {
       const category = formData.category === 'custom' ? customCategory : formData.category;
       
+      // Create the expense
       await expenseApi.create(user.id, {
         amount,
         title: formData.title,
-        notes: formData.notes,
+        notes: formData.notes || '',
         category,
-        date: formData.date.toISOString().split('T')[0], // YYYY-MM-DD format
+        date: format(formData.date, 'yyyy-MM-dd'),
       });
 
+      // Get updated analytics with AI feedback
+      const analytics = await analyticsApi.getAnalytics(user.id);
+
+      // Show success toast with AI insight
       toast({
-        title: "Expense Added",
-        description: `Successfully added $${amount.toFixed(2)} expense.`,
+        title: "Expense Added Successfully",
+        description: (
+          <div className="space-y-2">
+            <p>Added ${amount.toFixed(2)} expense</p>
+            <p className="text-sm text-muted-foreground">{analytics.ai_insight}</p>
+          </div>
+        ),
       });
 
       // Reset form
@@ -116,6 +126,7 @@ const AddExpense = () => {
       // Navigate back to dashboard
       navigate('/');
     } catch (error) {
+      console.error('Error adding expense:', error);
       toast({
         title: "Error",
         description: "Failed to add expense. Please try again.",
