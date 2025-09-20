@@ -10,11 +10,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import Navigation from '@/components/ui/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/contexts/AuthContext';
+import { useClerkUser } from '@/hooks/useClerkUser';
 import { expenseApi, analyticsApi } from '@/lib/api';
 import { PlusIcon, CalendarIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+
 
 interface ExpenseFormData {
   amount: string;
@@ -37,9 +38,9 @@ const EXPENSE_CATEGORIES = [
 ];
 
 const AddExpense = () => {
+  const { backendUser, isLoading } = useClerkUser();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { user } = useAuth();
   const [formData, setFormData] = useState<ExpenseFormData>({
     amount: '',
     title: '',
@@ -50,6 +51,7 @@ const AddExpense = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [customCategory, setCustomCategory] = useState('');
 
+
   const handleInputChange = (field: keyof ExpenseFormData, value: string | Date) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -57,7 +59,7 @@ const AddExpense = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user) {
+    if (!backendUser) {
       toast({
         title: "Authentication Error",
         description: "You must be logged in to add expenses.",
@@ -90,8 +92,8 @@ const AddExpense = () => {
     try {
       const category = formData.category === 'custom' ? customCategory : formData.category;
       
-      // Create the expense
-      await expenseApi.create(user.id, {
+      // Use backendUser.id instead of localStorage
+      await expenseApi.create(backendUser.id, {
         amount,
         title: formData.title,
         notes: formData.notes || '',
@@ -99,8 +101,8 @@ const AddExpense = () => {
         date: format(formData.date, 'yyyy-MM-dd'),
       });
 
-      // Get updated analytics with AI feedback
-      const analytics = await analyticsApi.getAnalytics(user.id);
+      // Get updated analytics
+      const analytics = await analyticsApi.getAnalytics(backendUser.id);
 
       // Show success toast with AI insight
       toast({

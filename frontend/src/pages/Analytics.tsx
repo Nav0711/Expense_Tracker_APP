@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import Navigation from '@/components/ui/navigation';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext';
+import { useClerkUser } from '@/hooks/useClerkUser';
+
 import { analyticsApi, AnalyticsData } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -32,7 +34,7 @@ interface CategoryData {
 }
 
 const Analytics = () => {
-  const { user } = useAuth();
+  const { backendUser, isLoading: isUserLoading } = useClerkUser();
   const { toast } = useToast();
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [categoryData, setCategoryData] = useState<CategoryData[]>([]);
@@ -42,13 +44,13 @@ const Analytics = () => {
 
   useEffect(() => {
     const loadAnalytics = async () => {
-      if (!user) {
+      if (!backendUser) {
         setIsLoading(false);
         return;
       }
 
       try {
-        const data = await analyticsApi.getAnalytics(user.id);
+        const data = await analyticsApi.getAnalytics(backendUser.id);
         setAnalyticsData(data);
         
         // Process category data for chart
@@ -69,10 +71,12 @@ const Analytics = () => {
       }
     };
 
-    loadAnalytics();
-  }, [user, toast]);
+    if (!isUserLoading) {
+      loadAnalytics();
+    }
+  }, [backendUser, isUserLoading, toast]);
 
-  if (!user) {
+  if (!backendUser) {
     return (
       <div className="min-h-screen bg-background">
         <Navigation />

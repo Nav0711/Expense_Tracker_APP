@@ -10,9 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "proxy": "http://localhost:8000"
-
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.47.0",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",

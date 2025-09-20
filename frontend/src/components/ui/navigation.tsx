@@ -1,23 +1,24 @@
-import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { 
-  HomeIcon, 
-  PlusIcon, 
-  ChartBarIcon, 
-  ArrowRightOnRectangleIcon 
-} from '@heroicons/react/24/outline';
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import {
+  HomeIcon,
+  PlusIcon,
+  ChartBarIcon,
+  ArrowRightOnRectangleIcon,
+} from "@heroicons/react/24/outline";
+import { useUser, useClerk } from "@clerk/clerk-react";
 
 const Navigation = () => {
-  const { user, logout } = useAuth();
+  const { user, isSignedIn } = useUser();
+  const { signOut } = useClerk();
   const location = useLocation();
 
-  if (!user) return null;
+  if (!isSignedIn || !user) return null;
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: HomeIcon },
-    { path: '/add-expense', label: 'Add Expense', icon: PlusIcon },
-    { path: '/analytics', label: 'Analytics', icon: ChartBarIcon },
+    { path: "/", label: "Dashboard", icon: HomeIcon },
+    { path: "/add-expense", label: "Add Expense", icon: PlusIcon },
+    { path: "/analytics", label: "Analytics", icon: ChartBarIcon },
   ];
 
   return (
@@ -28,12 +29,12 @@ const Navigation = () => {
             <Link to="/" className="text-xl font-bold text-primary">
               ExpenseTracker
             </Link>
-            
+
             <div className="hidden md:flex space-x-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
-                
+
                 return (
                   <Link key={item.path} to={item.path}>
                     <Button
@@ -51,12 +52,12 @@ const Navigation = () => {
 
           <div className="flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
-              Welcome, {user.username}
+              Welcome, {user.fullName || user.username || user.primaryEmailAddress?.emailAddress}
             </span>
             <Button
               variant="outline"
               size="sm"
-              onClick={logout}
+              onClick={() => signOut()}
               className="flex items-center gap-2"
             >
               <ArrowRightOnRectangleIcon className="h-4 w-4" />

@@ -20,10 +20,14 @@ class ExpenseOut(ExpenseCreate):
 class UserCreate(BaseModel):
     name: str
     email: EmailStr
+    clerk_id: str
     allowance: float
 
 class UserOut(UserCreate):
     id: int
+    name: str
+    email: EmailStr
+    clerk_id: str
     expenses: List[ExpenseOut] = []
     
     class Config:

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Navigation from '@/components/ui/navigation';
-import { useAuth } from '@/contexts/AuthContext';
+// import { useAuth } from '@/contexts/AuthContext';
+import {useUser} from '@clerk/clerk-react';
+
 import { expenseApi, Expense } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -14,7 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 const Dashboard = () => {
-  const { user } = useAuth();
+  const { user } = useUser();
   const { toast } = useToast();
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [stats, setStats] = useState({
@@ -24,6 +26,8 @@ const Dashboard = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
+  const backendUserId = Number(localStorage.getItem("user_id"));
+
   useEffect(() => {
     const loadExpenses = async () => {
       if (!user) {
@@ -32,7 +36,7 @@ const Dashboard = () => {
       }
 
       try {
-        const userExpenses = await expenseApi.list(user.id);
+        const userExpenses = await expenseApi.list(backendUserId);
         setExpenses(userExpenses);
         
         // Calculate stats
