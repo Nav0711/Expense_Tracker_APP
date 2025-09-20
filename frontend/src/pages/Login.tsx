@@ -17,7 +17,18 @@ export default function Login() {
 
   return (
     <div className="flex justify-center items-center h-screen">
-      <SignIn routing="hash" afterSignInUrl="/" />
+      <SignIn 
+        path="/login" 
+        routing="path" 
+        signUpUrl="/signup" 
+        signUpForceRedirectUrl="/"
+        
+        appearance={{
+          elements: {
+            formButtonPrimary: "bg-primary text-white hover:bg-primary/90",
+          },
+        }}
+      />
     </div>
   );
 }

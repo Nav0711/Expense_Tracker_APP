@@ -3,9 +3,11 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useUser, ClerkProvider } from "@clerk/clerk-react";
+import { useUser} from "@clerk/clerk-react";
 
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+
 import Dashboard from "./pages/Dashboard";
 import AddExpense from "./pages/AddExpense";
 import Analytics from "./pages/Analytics";
@@ -40,6 +42,8 @@ const App = () => (
         <div className="min-h-screen bg-background">
           <Routes>
             <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+
             <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
             <Route path="/add-expense" element={<ProtectedRoute><AddExpense /></ProtectedRoute>} />
             <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
